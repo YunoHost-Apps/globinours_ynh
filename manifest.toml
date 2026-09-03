@@ -5,7 +5,7 @@ id = "globinours"
 name = "Globinours"
 description.en = "Lightweight animal shelter management"
 description.fr = "Gestion légère et complète pour refuges animaliers"
-version = "1.0.0-rc.3~ynh6"
+version = "1.0.0-rc.3~ynh7"
 maintainers = ["OverSu"]
 
 [upstream]

@@ -24,4 +24,6 @@ prepare_persistent_paths() {
     chown -R "$app:$app" "$data_dir"
     chmod -R u=rwX,g=rX,o= "$install_dir"
     chmod -R u=rwX,g=,o= "$data_dir"
+    chown -R "$app:www-data" "$data_dir/media"
+    chmod -R u=rwX,g=rX,o= "$data_dir/media"
 }
