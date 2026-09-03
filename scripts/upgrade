@@ -1,0 +1,15 @@
+#!/bin/bash
+source _common.sh
+if [[ -f "$install_dir/scripts/backup.php" && -f "$data_dir/refuge.sqlite" ]]; then
+    ynh_exec_as_app php "$install_dir/scripts/backup.php" pre-upgrade-yunohost
+fi
+touch "$data_dir/storage/maintenance.flag"
+trap 'rm -f "$data_dir/storage/maintenance.flag"' EXIT
+ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage public/media"
+prepare_persistent_paths
+ynh_config_add_phpfpm
+ynh_config_add_nginx
+ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+rm -f "$data_dir/storage/maintenance.flag"
+trap - EXIT
+ynh_systemctl --service=php8.2-fpm --action=reload

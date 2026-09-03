@@ -1,0 +1,10 @@
+#!/bin/bash
+source ../settings/scripts/_common.sh
+ynh_restore "$install_dir"
+ynh_restore "$data_dir"
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore "/etc/php/$php_version/fpm/pool.d/$app.conf"
+chown -R "$app:$app" "$install_dir" "$data_dir"
+ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+ynh_systemctl --service=php8.2-fpm --action=reload
+ynh_systemctl --service=nginx --action=reload
