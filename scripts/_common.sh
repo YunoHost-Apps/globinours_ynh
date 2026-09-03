@@ -5,6 +5,9 @@ php_upload_max_filesize="250M"
 
 install_yunohost_logo() {
     install -D -m 0644 "$YNH_APP_BASEDIR/logo.png" "/usr/share/yunohost/applogos/$app.png"
+    yunohost app config set "$app" permission_main_logo \
+        --value="$YNH_APP_BASEDIR/logo.png" \
+        --core
 }
 
 prepare_persistent_paths() {
