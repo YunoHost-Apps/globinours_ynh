@@ -1,0 +1,4 @@
+#!/bin/bash
+source _common.sh
+ynh_config_remove_nginx
+ynh_config_remove_phpfpm

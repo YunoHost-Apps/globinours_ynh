@@ -1,0 +1,9 @@
+#!/bin/bash
+source _common.sh
+ynh_script_progression --message="Installation de Globinours..."
+ynh_setup_source --dest_dir="$install_dir"
+prepare_persistent_paths
+ynh_config_add_phpfpm
+ynh_config_add_nginx
+ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+ynh_systemctl --service=php8.2-fpm --action=reload

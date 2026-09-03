@@ -1,0 +1,6 @@
+#!/bin/bash
+source ../settings/scripts/_common.sh
+ynh_backup "$install_dir"
+ynh_backup "$data_dir"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/php/$php_version/fpm/pool.d/$app.conf"

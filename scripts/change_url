@@ -1,0 +1,4 @@
+#!/bin/bash
+source _common.sh
+ynh_change_url_nginx_config
+ynh_systemctl --service=nginx --action=reload
