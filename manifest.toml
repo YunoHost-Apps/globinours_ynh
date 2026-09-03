@@ -1,9 +1,11 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
 packaging_format = 2
 id = "globinours"
 name = "Globinours"
 description.en = "Lightweight animal shelter management"
 description.fr = "Gestion légère et complète pour refuges animaliers"
-version = "1.0.0~rc1~ynh1"
+version = "1.0.0-rc.3~ynh1"
 maintainers = ["OverSu"]
 
 [upstream]
@@ -24,21 +26,21 @@ ram.runtime = "100M"
 [install]
     [install.domain]
     type = "domain"
-    full_domain = true
     [install.init_main_permission]
     type = "group"
     default = "visitors"
 
 [resources]
     [resources.sources.main]
-    # URL locale utilisée par le bundle de test pré-1.0.
-    url = "http://127.0.0.1:8123/globinours-1.0.0-rc.1.tar.gz"
-    sha256 = "d467adc4646bd541cdc695991cb80de5f7a0170d422ff1ef86e9d072af17ebe0"
-    in_subdir = false
+    url = "https://nnsprod.com/git/oversu/Globinours/archive/9a2b4068da3c707aa32f365b2d7943398703c44b.tar.gz"
+    sha256 = "164f56084cf6c75fd1a6f2ae9c7639c65b09e54266b7d3fd07bb1902515a36b5"
+    in_subdir = true
+    autoupdate.strategy = "latest_forgejo_commit"
+    autoupdate.upstream = "https://nnsprod.com/git/oversu/Globinours"
     [resources.system_user]
     [resources.install_dir]
     [resources.data_dir]
     [resources.permissions]
     main.url = "/"
     [resources.apt]
-    packages = "php8.2-fpm, php8.2-cli, php8.2-sqlite3, php8.2-mbstring, php8.2-xml, php8.2-zip, php8.2-gd, php8.2-curl, php8.2-intl, sqlite3, rsync"
+    packages = "php8.2-fpm, php8.2-cli, php8.2-sqlite3, php8.2-mbstring, php8.2-xml, php8.2-zip, php8.2-gd, php8.2-curl, php8.2-intl, sqlite3"
