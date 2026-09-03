@@ -3,6 +3,10 @@ source /usr/share/yunohost/helpers
 
 php_upload_max_filesize="250M"
 
+install_yunohost_logo() {
+    install -D -m 0644 "$YNH_APP_BASEDIR/logo.png" "/usr/share/yunohost/applogos/$app.png"
+}
+
 prepare_persistent_paths() {
     mkdir -p "$data_dir/association" "$data_dir/grants" "$data_dir/medical-documents" \
         "$data_dir/private-media" "$data_dir/media" "$data_dir/storage/logs" \

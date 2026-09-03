@@ -7,6 +7,7 @@ touch "$data_dir/storage/maintenance.flag"
 trap 'rm -f "$data_dir/storage/maintenance.flag"' EXIT
 ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage public/media"
 prepare_persistent_paths
+install_yunohost_logo
 ynh_config_add_phpfpm
 ynh_config_add_nginx
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"
