@@ -1,5 +1,9 @@
 # Globinours pour YunoHost — 1.0.0-rc.3
 
+<p align="center">
+  <img src="logo.png" alt="Logo de Globinours" width="160">
+</p>
+
 Ce paquet installe Globinours sur un domaine ou sous-domaine dédié. Il télécharge une archive immuable de l’application depuis le dépôt Forgejo officiel, puis vérifie son empreinte SHA-256 avant installation.
 
 ## Installation de test
