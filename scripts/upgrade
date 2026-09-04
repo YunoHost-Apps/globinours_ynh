@@ -1,19 +1,54 @@
 #!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
 source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# CREATE AN APPLICATION BACKUP
+#=================================================
+
 if [[ -f "$install_dir/scripts/backup.php" && -f "$data_dir/refuge.sqlite" ]] && \
     php -l "$install_dir/app/Services/BackupService.php" >/dev/null 2>&1; then
     ynh_exec_as_app php "$install_dir/scripts/backup.php" pre-upgrade-yunohost
 elif [[ -f "$data_dir/refuge.sqlite" ]]; then
     ynh_print_warn --message="La sauvegarde applicative préalable est ignorée car l'ancienne version n'est pas compatible avec PHP $php_version. La sauvegarde de sécurité YunoHost reste active."
 fi
+
+#=================================================
+# ENABLE MAINTENANCE MODE
+#=================================================
+
 touch "$data_dir/storage/maintenance.flag"
 trap 'rm -f "$data_dir/storage/maintenance.flag"' EXIT
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+ynh_script_progression "Upgrading source files..."
+
 ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage public/media"
+
+#=================================================
+# UPDATE APPLICATION AND SYSTEM CONFIGURATION
+#=================================================
+
 prepare_persistent_paths
-install_yunohost_logo
 ynh_config_add_phpfpm
 ynh_config_add_nginx
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+
 rm -f "$data_dir/storage/maintenance.flag"
 trap - EXIT
+
 ynh_systemctl --service="php$php_version-fpm" --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Upgrade of $app completed"

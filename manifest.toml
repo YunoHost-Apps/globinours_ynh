@@ -5,11 +5,13 @@ id = "globinours"
 name = "Globinours"
 description.en = "Lightweight animal shelter management"
 description.fr = "Gestion légère et complète pour refuges animaliers"
-version = "1.0.0-rc.3~ynh10"
+version = "1.0.0-rc.3~ynh11"
 maintainers = ["OverSu"]
 
 [upstream]
 license = "AGPL-3.0-or-later"
+website = "https://globinours.fr"
+demo = "https://demo.globinours.fr"
 code = "https://nnsprod.com/git/oversu/Globinours"
 
 [integration]
@@ -40,6 +42,7 @@ ram.runtime = "100M"
     [resources.system_user]
     [resources.install_dir]
     [resources.data_dir]
+    subdirs = ["association", "grants", "medical-documents", "private-media", "media", "storage/logs", "storage/backups", "storage/releases"]
     [resources.permissions]
     main.url = "/"
     [resources.apt]

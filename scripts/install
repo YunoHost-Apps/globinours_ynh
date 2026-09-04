@@ -1,10 +1,47 @@
 #!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
 source _common.sh
-ynh_script_progression --message="Installation de Globinours..."
+source /usr/share/yunohost/helpers
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+ynh_script_progression "Setting up source files..."
+
 ynh_setup_source --dest_dir="$install_dir"
+
+#=================================================
+# APP INITIAL CONFIGURATION
+#=================================================
+
 prepare_persistent_paths
-install_yunohost_logo
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+
+ynh_script_progression "Adding system configurations related to $app..."
+
 ynh_config_add_phpfpm
 ynh_config_add_nginx
+
+#=================================================
+# INITIALIZE THE APPLICATION
+#=================================================
+
+ynh_script_progression "Initializing the database..."
+
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+
 ynh_systemctl --service="php$php_version-fpm" --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Installation of $app completed"
