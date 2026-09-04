@@ -25,6 +25,14 @@ ynh_script_progression "Restoring system configurations related to $app..."
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_restore "/etc/php/$php_version/fpm/pool.d/$app.conf"
 
+migrate_legacy_data
+
+for migrated_path in "$install_dir/data" "$install_dir/storage" "$install_dir/public/media"; do
+    if [[ -d "$migrated_path" && ! -L "$migrated_path" ]]; then
+        ynh_safe_rm "$migrated_path"
+    fi
+done
+
 prepare_persistent_paths
 install_yunohost_logo
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"

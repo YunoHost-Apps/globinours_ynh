@@ -15,8 +15,47 @@ install_yunohost_logo() {
     yunohost user permission update "$app.main" --logo "$logo"
 }
 
+migrate_legacy_data() {
+    local legacy_data="$install_dir/data"
+    local legacy_storage="$install_dir/storage"
+    local legacy_media="$install_dir/public/media"
+
+    if [[ -d "$legacy_data" && ! -L "$legacy_data" ]]; then
+        ynh_print_info "Migrating the legacy data directory to $data_dir..."
+        cp -a "$legacy_data/." "$data_dir/"
+
+        if [[ -f "$legacy_data/refuge.sqlite" ]]; then
+            local migrated_database="$data_dir/refuge.sqlite.migrating"
+            sqlite3 "$legacy_data/refuge.sqlite" ".backup '$migrated_database'"
+
+            local integrity_check
+            integrity_check="$(sqlite3 "$migrated_database" "PRAGMA integrity_check;")"
+            if [[ "$integrity_check" != "ok" ]]; then
+                rm -f "$migrated_database"
+                ynh_die --message="The migrated Globinours database failed its integrity check. The legacy data was left untouched."
+            fi
+
+            mv -f "$migrated_database" "$data_dir/refuge.sqlite"
+            rm -f "$data_dir/refuge.sqlite-wal" "$data_dir/refuge.sqlite-shm"
+        fi
+    fi
+
+    if [[ -d "$legacy_storage" && ! -L "$legacy_storage" ]]; then
+        ynh_print_info "Migrating the legacy storage directory to $data_dir/storage..."
+        cp -a "$legacy_storage/." "$data_dir/storage/"
+    fi
+
+    if [[ -d "$legacy_media" && ! -L "$legacy_media" ]]; then
+        ynh_print_info "Migrating the legacy public media directory to $data_dir/media..."
+        cp -a "$legacy_media/." "$data_dir/media/"
+    fi
+}
+
 prepare_persistent_paths() {
     for path_to_replace in "$install_dir/data" "$install_dir/storage" "$install_dir/public/media"; do
+        if [[ -d "$path_to_replace" && ! -L "$path_to_replace" ]]; then
+            ynh_die --message="Refusing to replace the physical data directory $path_to_replace before it is migrated."
+        fi
         if [[ -e "$path_to_replace" || -L "$path_to_replace" ]]; then
             ynh_safe_rm "$path_to_replace"
         fi

@@ -11,12 +11,18 @@ source /usr/share/yunohost/helpers
 # CREATE AN APPLICATION BACKUP
 #=================================================
 
-if [[ -f "$install_dir/scripts/backup.php" && -f "$data_dir/refuge.sqlite" ]] && \
+if [[ -f "$install_dir/scripts/backup.php" && -f "$install_dir/data/refuge.sqlite" ]] && \
     php -l "$install_dir/app/Services/BackupService.php" >/dev/null 2>&1; then
     ynh_exec_as_app php "$install_dir/scripts/backup.php" pre-upgrade-yunohost
-elif [[ -f "$data_dir/refuge.sqlite" ]]; then
+elif [[ -f "$install_dir/data/refuge.sqlite" ]]; then
     ynh_print_warn --message="La sauvegarde applicative préalable est ignorée car l'ancienne version n'est pas compatible avec PHP $php_version. La sauvegarde de sécurité YunoHost reste active."
 fi
+
+#=================================================
+# MIGRATE LEGACY DATA
+#=================================================
+
+migrate_legacy_data
 
 #=================================================
 # ENABLE MAINTENANCE MODE
@@ -32,6 +38,13 @@ trap 'rm -f "$data_dir/storage/maintenance.flag"' EXIT
 ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage public/media"
+
+# Physical legacy directories were kept until their migration was complete.
+for migrated_path in "$install_dir/data" "$install_dir/storage" "$install_dir/public/media"; do
+    if [[ -d "$migrated_path" && ! -L "$migrated_path" ]]; then
+        ynh_safe_rm "$migrated_path"
+    fi
+done
 
 #=================================================
 # UPDATE APPLICATION AND SYSTEM CONFIGURATION
