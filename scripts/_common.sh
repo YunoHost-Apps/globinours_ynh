@@ -5,9 +5,11 @@ php_upload_max_filesize="250M"
 
 install_yunohost_logo() {
     install -D -m 0644 "$YNH_APP_BASEDIR/logo.png" "/usr/share/yunohost/applogos/$app.png"
-    yunohost app config set "$app" permission_main_logo \
+    if ! yunohost app config set "$app" _core.permission_main.permission_main_logo \
         --value="$YNH_APP_BASEDIR/logo.png" \
-        --core
+        --core; then
+        ynh_print_warn --message="Le logo du portail YunoHost n'a pas pu être enregistré. L'installation de Globinours continue."
+    fi
 }
 
 prepare_persistent_paths() {
