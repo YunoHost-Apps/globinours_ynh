@@ -20,6 +20,7 @@ ynh_setup_source --dest_dir="$install_dir"
 #=================================================
 
 prepare_persistent_paths
+install_yunohost_logo
 
 #=================================================
 # SYSTEM CONFIGURATION

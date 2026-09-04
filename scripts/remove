@@ -13,6 +13,10 @@ source /usr/share/yunohost/helpers
 
 ynh_script_progression "Removing system configurations related to $app..."
 
+if [[ -e "/usr/share/yunohost/applogos/$app.png" ]]; then
+    ynh_safe_rm "/usr/share/yunohost/applogos/$app.png"
+fi
+
 ynh_config_remove_nginx
 ynh_config_remove_phpfpm
 

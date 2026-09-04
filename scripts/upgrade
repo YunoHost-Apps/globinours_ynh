@@ -38,6 +38,7 @@ ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage p
 #=================================================
 
 prepare_persistent_paths
+install_yunohost_logo
 ynh_config_add_phpfpm
 ynh_config_add_nginx
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"

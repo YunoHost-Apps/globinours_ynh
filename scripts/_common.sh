@@ -6,6 +6,12 @@
 
 php_upload_max_filesize="250M"
 
+install_yunohost_logo() {
+    install -D -m 0644 \
+        "$install_dir/resources/branding/Logo_Globinours_maxi.png" \
+        "/usr/share/yunohost/applogos/$app.png"
+}
+
 prepare_persistent_paths() {
     for path_to_replace in "$install_dir/data" "$install_dir/storage" "$install_dir/public/media"; do
         if [[ -e "$path_to_replace" || -L "$path_to_replace" ]]; then
