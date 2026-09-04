@@ -7,9 +7,12 @@
 php_upload_max_filesize="250M"
 
 install_yunohost_logo() {
+    local logo="$install_dir/resources/branding/Logo_Globinours_maxi.png"
+
     install -D -m 0644 \
-        "$install_dir/resources/branding/Logo_Globinours_maxi.png" \
+        "$logo" \
         "/usr/share/yunohost/applogos/$app.png"
+    yunohost user permission update "$app.main" --logo "$logo"
 }
 
 prepare_persistent_paths() {
