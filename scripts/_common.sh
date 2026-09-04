@@ -4,8 +4,6 @@
 # COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
-source /usr/share/yunohost/helpers
-
 php_upload_max_filesize="250M"
 
 prepare_persistent_paths() {
