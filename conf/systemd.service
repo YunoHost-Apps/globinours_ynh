@@ -1,0 +1,16 @@
+[Unit]
+Description=Globinours demonstration server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=__INSTALL_DIR__
+ExecStart=/usr/bin/php -S 127.0.0.1:8091 -t public public/router.php
+Restart=on-failure
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
