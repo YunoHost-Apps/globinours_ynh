@@ -19,14 +19,17 @@ ynh_app_setting_set_default --key=php_post_max_size --value=260M
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env"
+ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env data public/media storage"
+
+chown -R $app:$app $install_dir/data $install_dir/public/media $install_dir/storage
+chmod -R u+rwX $install_dir/data $install_dir/public/media $install_dir/storage
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression "Updating $app's configuration files..."
+#ynh_script_progression "Updating $app's configuration files..."
 
-ynh_config_add --template=".env" --destination="$install_dir/.env"
+#ynh_config_add --template=".env" --destination="$install_dir/.env"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATION
