@@ -1,1 +1,3 @@
-Ceci est une fausse description des fonctionalités de l'app
+Globinours est une application web de gestion de refuge animalier, développée à partir de besoins concrets observés sur le terrain.
+
+Elle centralise les animaux, leur santé, leurs documents, leurs liens familiaux, les familles d’accueil, les contacts et les actions quotidiennes. Son objectif est simple : permettre aux bénévoles et responsables de trouver ou saisir une information en quelques secondes, sans traverser une succession d’écrans complexes.
