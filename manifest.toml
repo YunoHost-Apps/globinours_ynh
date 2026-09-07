@@ -5,7 +5,7 @@ id = "globinours"
 name = "Globinours"
 description.en = "Lightweight animal shelter management"
 description.fr = "Gestion légère et complète pour refuges animaliers"
-version = "1.0.0-rc.12~ynh1"
+version = "1.0.0-rc.13~ynh1"
 maintainers = ["OverSu"]
 
 [upstream]
@@ -34,8 +34,8 @@ ram.runtime = "100M"
 
 [resources]
     [resources.sources.main]
-    url = "https://nnsprod.com/git/oversu/Globinours/archive/1378aefa9ce51ac938003bff659653e0da4eb10a.tar.gz"
-    sha256 = "e440608608a8c8d66c06e9307a36f401d18d112b220f29a2f0a1a2bf555e6d3e"
+    url = "https://nnsprod.com/git/oversu/Globinours/archive/b906cf7b882bbe96f7f947b4581e81bddae00858.tar.gz"
+    sha256 = "62c4cac48db2eb4ceede8d88d5107b5121d0876a58559466437866c959b5a79b"
     in_subdir = true
     autoupdate.strategy = "latest_forgejo_commit"
     autoupdate.upstream = "https://nnsprod.com/git/oversu/Globinours"
