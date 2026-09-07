@@ -1,58 +1,49 @@
 #:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
 
 packaging_format = 2
-
 id = "globinours"
 name = "Globinours"
-description.en = "Managing animal shelters and animal welfare associations"
-description.fr = "Gestion des refuges pour animaux et des associations de protection des animaux"
-
-version = "1.0~ynh1"
-
-maintainers = [ ]
+description.en = "Lightweight animal shelter management"
+description.fr = "Gestion légère et complète pour refuges animaliers"
+version = "1.0.0-rc.4~ynh2"
+maintainers = ["OverSu"]
 
 [upstream]
 license = "AGPL-3.0-or-later"
 website = "https://globinours.fr"
+demo = "https://demo.globinours.fr"
 code = "https://nnsprod.com/git/oversu/Globinours"
 
 [integration]
-yunohost = ">= 12.1.40"
+yunohost = ">= 12.1.17"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
-
-ldap = false
-sso = false
-
-disk = "50M"
-ram.build = "50M"
-ram.runtime = "50M"
+ldap = "not_relevant"
+sso = "not_relevant"
+disk = "300M"
+ram.build = "100M"
+ram.runtime = "100M"
 
 [install]
     [install.domain]
     type = "domain"
-
     [install.init_main_permission]
     type = "group"
     default = "visitors"
 
 [resources]
-
-    [resources.sources]
-
     [resources.sources.main]
-    url = "https://nnsprod.com/git/oversu/Globinours/archive/d7fb2b4413e18a6a792b77e547e6dc50715c87bb.tar.gz"
-    sha256 = "70aa4ecb23983b5ea3bb3945df1e6e355bcab98067eca6d62debea3240fb0a6e"
-    autoupdate.strategy = "latest_forgejo_tag"
-
+    url = "https://nnsprod.com/git/oversu/Globinours/archive/6e3beea2115e9c232a4c74ed54bdc987f3eb0ba3.tar.gz"
+    sha256 = "22156ff9cf300d77f88e5fbfa1d53408b2cd4a3cfdecc4d218c2f1cc0d802e00"
+    in_subdir = true
+    autoupdate.strategy = "latest_forgejo_commit"
+    autoupdate.upstream = "https://nnsprod.com/git/oversu/Globinours"
     [resources.system_user]
-
     [resources.install_dir]
-    group = "www-data:r-x"
-
+    [resources.data_dir]
+    subdirs = ["association", "grants", "medical-documents", "private-media", "media", "storage/logs", "storage/backups", "storage/releases"]
     [resources.permissions]
     main.url = "/"
-
     [resources.apt]
-    packages = "php8.2-sqlite3, php8.2-zip, php8.2-curl, php8.2-mbstring,, php8.2-gd, libreoffice"
+    packages = "php8.2-fpm, php8.2-cli, php8.2-sqlite3, php8.2-mbstring, php8.2-xml, php8.2-zip, php8.2-gd, php8.2-curl, php8.2-intl, sqlite3"
