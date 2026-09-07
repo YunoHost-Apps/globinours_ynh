@@ -21,7 +21,7 @@ Lightweight animal shelter management
 
 
 ## Screenshots
-![Screenshot of Globinours](https://nnsprod.com/cloud/apps/files_sharing/publicpreview/rLkQ7FMMLB5Xszk?file=/&fileId=2059449&x=3840&y=1080&a=true&etag=790458e48b8422696c00a2b13f3da9dd)
+![Screenshot of Globinours](./doc/screenshots/example.jpg)
 
 ## 📦 Developer info
 
