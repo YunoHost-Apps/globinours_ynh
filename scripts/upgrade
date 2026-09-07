@@ -4,41 +4,73 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
+source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
+# CREATE AN APPLICATION BACKUP
 #=================================================
-ynh_script_progression "Ensuring downward compatibility..."
 
-ynh_app_setting_set_default --key=php_upload_max_filesize --value=250M
-ynh_app_setting_set_default --key=php_post_max_size --value=260M
+if [[ -f "$install_dir/scripts/backup.php" && -f "$install_dir/data/refuge.sqlite" ]] && \
+    php -l "$install_dir/app/Services/BackupService.php" >/dev/null 2>&1; then
+    ynh_exec_as_app php "$install_dir/scripts/backup.php" pre-upgrade-yunohost
+elif [[ -f "$install_dir/data/refuge.sqlite" ]]; then
+    ynh_print_warn --message="La sauvegarde applicative préalable est ignorée car l'ancienne version n'est pas compatible avec PHP $php_version. La sauvegarde de sécurité YunoHost reste active."
+fi
+
+#=================================================
+# MIGRATE LEGACY DATA
+#=================================================
+
+migrate_legacy_data
+
+data_inventory="$(mktemp)"
+data_guard="$data_dir/.globinours-upgrade-guard"
+inventory_persistent_data "$data_inventory"
+touch "$data_guard"
+
+#=================================================
+# ENABLE MAINTENANCE MODE
+#=================================================
+
+touch "$data_dir/storage/maintenance.flag"
+trap 'rm -f "$data_dir/storage/maintenance.flag" "$data_guard" "$data_inventory"' EXIT
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+
 ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env data public/media storage"
+ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="data storage public/media"
 
-chown -R $app:$app $install_dir/data $install_dir/public/media $install_dir/storage
-chmod -R u+rwX $install_dir/data $install_dir/public/media $install_dir/storage
-
-#=================================================
-# UPDATE A CONFIG FILE
-#=================================================
-#ynh_script_progression "Updating $app's configuration files..."
-
-#ynh_config_add --template=".env" --destination="$install_dir/.env"
+# Physical legacy directories were kept until their migration was complete.
+for migrated_path in "$install_dir/data" "$install_dir/storage" "$install_dir/public/media"; do
+    if [[ -d "$migrated_path" && ! -L "$migrated_path" ]]; then
+        ynh_safe_rm "$migrated_path"
+    fi
+done
 
 #=================================================
-# REAPPLY SYSTEM CONFIGURATION
+# UPDATE APPLICATION AND SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression "Upgrading system configurations related to $app..."
 
+prepare_persistent_paths
+install_yunohost_logo
 ynh_config_add_phpfpm
-
 ynh_config_add_nginx
+ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+
+if [[ ! -f "$data_guard" ]]; then
+    ynh_die --message="The persistent data directory was replaced during the upgrade."
+fi
+verify_persistent_inventory "$data_inventory"
+repair_and_verify_permissions
+
+rm -f "$data_dir/storage/maintenance.flag" "$data_guard" "$data_inventory"
+trap - EXIT
+
+ynh_systemctl --service="php$php_version-fpm" --action=reload
 
 #=================================================
 # END OF SCRIPT
