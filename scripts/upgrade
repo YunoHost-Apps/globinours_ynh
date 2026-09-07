@@ -24,12 +24,17 @@ fi
 
 migrate_legacy_data
 
+data_inventory="$(mktemp)"
+data_guard="$data_dir/.globinours-upgrade-guard"
+inventory_persistent_data "$data_inventory"
+touch "$data_guard"
+
 #=================================================
 # ENABLE MAINTENANCE MODE
 #=================================================
 
 touch "$data_dir/storage/maintenance.flag"
-trap 'rm -f "$data_dir/storage/maintenance.flag"' EXIT
+trap 'rm -f "$data_dir/storage/maintenance.flag" "$data_guard" "$data_inventory"' EXIT
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -56,7 +61,13 @@ ynh_config_add_phpfpm
 ynh_config_add_nginx
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"
 
-rm -f "$data_dir/storage/maintenance.flag"
+if [[ ! -f "$data_guard" ]]; then
+    ynh_die --message="The persistent data directory was replaced during the upgrade."
+fi
+verify_persistent_inventory "$data_inventory"
+repair_and_verify_permissions
+
+rm -f "$data_dir/storage/maintenance.flag" "$data_guard" "$data_inventory"
 trap - EXIT
 
 ynh_systemctl --service="php$php_version-fpm" --action=reload

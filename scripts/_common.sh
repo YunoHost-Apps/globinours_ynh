@@ -65,6 +65,12 @@ prepare_persistent_paths() {
     ln -s "$data_dir/storage" "$install_dir/storage"
     ln -s "$data_dir/media" "$install_dir/public/media"
 
+    repair_and_verify_permissions
+}
+
+repair_and_verify_permissions() {
+    ynh_print_info "Checking Globinours persistent-data permissions..."
+
     chown -R "$app:www-data" "$install_dir"
     chown -R "$app:$app" "$data_dir"
     chmod -R u=rwX,g=rX,o= "$install_dir"
@@ -74,4 +80,47 @@ prepare_persistent_paths() {
     chmod 0710 "$data_dir"
     chown -R "$app:www-data" "$data_dir/media"
     chmod -R u=rwX,g=rX,o= "$data_dir/media"
+
+    if ! ynh_exec_as_app test -r "$data_dir" || ! ynh_exec_as_app test -w "$data_dir"; then
+        ynh_die --message="The Globinours system user cannot read and write its persistent data directory."
+    fi
+    if ! runuser -u www-data -- test -x "$data_dir" || ! runuser -u www-data -- test -r "$data_dir/media"; then
+        ynh_die --message="Nginx cannot access the Globinours public media directory."
+    fi
+    if [[ -f "$data_dir/refuge.sqlite" ]]; then
+        local integrity_check
+        integrity_check="$(ynh_exec_as_app sqlite3 "$data_dir/refuge.sqlite" "PRAGMA quick_check;")"
+        if [[ "$integrity_check" != "ok" ]]; then
+            ynh_die --message="The Globinours database failed its integrity check."
+        fi
+    fi
+}
+
+inventory_persistent_data() {
+    local inventory_file="$1"
+
+    : > "$inventory_file"
+    if [[ -f "$data_dir/refuge.sqlite" ]]; then
+        printf '%s\n' "refuge.sqlite" >> "$inventory_file"
+    fi
+    for persistent_subdir in association grants medical-documents private-media media; do
+        if [[ -d "$data_dir/$persistent_subdir" ]]; then
+            find "$data_dir/$persistent_subdir" -type f -printf '%P\n' |
+                sed "s#^#$persistent_subdir/#" >> "$inventory_file"
+        fi
+    done
+    sort -u -o "$inventory_file" "$inventory_file"
+}
+
+verify_persistent_inventory() {
+    local inventory_file="$1"
+    local missing_file
+
+    while IFS= read -r persistent_file; do
+        [[ -z "$persistent_file" ]] && continue
+        if [[ ! -f "$data_dir/$persistent_file" ]]; then
+            missing_file="$persistent_file"
+            ynh_die --message="Persistent data disappeared during the operation: $missing_file"
+        fi
+    done < "$inventory_file"
 }

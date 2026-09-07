@@ -36,6 +36,7 @@ done
 prepare_persistent_paths
 install_yunohost_logo
 ynh_exec_as_app php "$install_dir/scripts/migrate.php"
+repair_and_verify_permissions
 
 ynh_systemctl --service="php$php_version-fpm" --action=reload
 ynh_systemctl --service=nginx --action=reload
