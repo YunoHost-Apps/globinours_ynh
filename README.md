@@ -12,12 +12,16 @@ Lightweight animal shelter management
 
 [![🌐 Official app website](https://img.shields.io/badge/Official_app_website-darkgreen?style=for-the-badge)](https://globinours.fr)
 [![App Demo](https://img.shields.io/badge/App_Demo-blue?style=for-the-badge)](https://demo.globinours.fr)
-[![Version: 1.0.0-rc.3~ynh15](https://img.shields.io/badge/Version-1.0.0--rc.3~ynh15-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/globinours/)
+[![Version: 1.0.0-rc.17~ynh2](https://img.shields.io/badge/Version-1.0.0--rc.17~ynh2-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/globinours/)
 
 <div align="center">
 <a href="https://apps.yunohost.org/app/globinours"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_more_info_on_the_appstore.svg"/></a>
 <a href="https://github.com/YunoHost-Apps/globinours_ynh/issues"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_report_an_issue.svg"/></a>
 </div>
+
+
+## Screenshots
+![Screenshot of Globinours](./doc/screenshots/example.jpg)
 
 ## 📦 Developer info
 
@@ -36,11 +40,6 @@ sudo yunohost app install https://github.com/YunoHost-Apps/globinours_ynh/tree/t
 sudo yunohost app upgrade globinours -u https://github.com/YunoHost-Apps/globinours_ynh/tree/testing
 ```
 
-You can also switch to the testing branch to update from testing by default (as same as for APT when you chose to use a testing repos) with this command:
-```bash
-sudo yunohost app setting globinours upgrade_channel -v testing
-```
-
 ### 📚 App packaging documentation
 
-Please see <https://doc.yunohost.org/dev/packaging/> for more information.
+Please see <https://doc.yunohost.org/packaging_apps> for more information.
