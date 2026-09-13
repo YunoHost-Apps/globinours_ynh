@@ -1,0 +1,5 @@
+*.log
+.DS_Store
+.manifest.v2.schema.json
+.spdx_licenses
+.tests.v1.schema.json

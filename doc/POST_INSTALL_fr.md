@@ -1,0 +1,1 @@
+Ouvrez l’adresse de l’application et terminez l’assistant Globinours afin de créer le premier compte administrateur. Conservez l’authentification propre à l’application : ce paquet n’utilise pas le SSO YunoHost.
