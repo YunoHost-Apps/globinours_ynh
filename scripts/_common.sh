@@ -76,16 +76,30 @@ repair_and_verify_permissions() {
     chmod -R u=rwX,g=rX,o= "$install_dir"
     chmod -R u=rwX,g=,o= "$data_dir"
 
+    # Nginx doit pouvoir traverser tout le code public. Une mise à jour
+    # autonome plus ancienne a pu créer ces dossiers avec un umask strict.
+    find "$install_dir/public" -type d -exec chmod 0755 {} +
+    find "$install_dir/public" -type f -exec chmod 0644 {} +
+
     chown "$app:www-data" "$data_dir"
     chmod 0710 "$data_dir"
     chown -R "$app:www-data" "$data_dir/media"
-    chmod -R u=rwX,g=rX,o= "$data_dir/media"
+    find "$data_dir/media" -type d -exec chmod 0750 {} +
+    find "$data_dir/media" -type f -exec chmod 0640 {} +
 
     if ! ynh_exec_as_app test -r "$data_dir" || ! ynh_exec_as_app test -w "$data_dir"; then
         ynh_die --message="The Globinours system user cannot read and write its persistent data directory."
     fi
     if ! runuser -u www-data -- test -x "$data_dir" || ! runuser -u www-data -- test -r "$data_dir/media"; then
         ynh_die --message="Nginx cannot access the Globinours public media directory."
+    fi
+    if ! runuser -u www-data -- test -r "$install_dir/public/index.php"; then
+        ynh_die --message="Nginx cannot access the Globinours public entry point."
+    fi
+    local public_media_sample
+    public_media_sample="$(find "$data_dir/media" -type f -print -quit)"
+    if [[ -n "$public_media_sample" ]] && ! runuser -u www-data -- test -r "$public_media_sample"; then
+        ynh_die --message="Nginx cannot read an existing Globinours public media file."
     fi
     if [[ -f "$data_dir/refuge.sqlite" ]]; then
         local integrity_check
